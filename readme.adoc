@@ -14,6 +14,9 @@
 This tool reports installations of Visual Studio. From Visual Studio 2017, it is possible to install multiple instances of Visual Studio on the same computer. You might
 want to do this so that you have a different instance for each workload you develop for (e.g. an instance for desktop development and an instance for mobile development).
 
+
+== Visual Studio Instance Information
+
 You can see all installed instances of Visual Studio by looking in the folder
 
 ----
@@ -23,3 +26,22 @@ C:\ProgramData\Microsoft\VisualStudio\Packages\_Instances
 In this folder you will see a subfolder for each instance:
 
 image::docs/instances.png[Instances]
+
+In each subfolder you will find a `state.json` file with details of the installation for that instance:
+
+image::docs/json.png[JSon]
+
+
+You can open this file to get information about the installed instance such as:
+
+* *Installation Path* - the path in `c:\program files (x86)` where this instance of Visual Studio is installed.
+* *Installation Date* - the date on which this instance of Visual Studio was installed.
+* *Update Date* - the date on which this instance of Visual Studio was last updated.
+* *Layout Path* - the path to the offline installer (known as a layout) used to install this instance of Visual Studio if one was used. 
+* *Installation Version* - the version of this instance of Visual Studio.
+
+This code prints all of the above information
+
+== Private Registry
+
+From Visual Studio 2017, a private registry file is used: `privateregistry.bin`.
