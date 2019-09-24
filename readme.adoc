@@ -1,0 +1,25 @@
+:toc:
+:sectnums:
+:toclevels: 5
+:sectnumlevels: 5
+:showcomments:
+:xrefstyle: short
+:icons: font
+:source-highlighter: coderay
+:tick: &#x2714;
+:pound: &#xA3;
+
+= Visual Studio 2017/2019 installation checker
+
+This tool reports installations of Visual Studio. From Visual Studio 2017, it is possible to install multiple instances of Visual Studio on the same computer. You might
+want to do this so that you have a different instance for each workload you develop for (e.g. an instance for desktop development and an instance for mobile development).
+
+You can see all installed instances of Visual Studio by looking in the folder
+
+----
+C:\ProgramData\Microsoft\VisualStudio\Packages\_Instances
+----
+
+In this folder you will see a subfolder for each instance:
+
+image::docs/instances.png[Instances]
