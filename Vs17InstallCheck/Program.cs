@@ -129,7 +129,7 @@ namespace Vs17InstallCheck
                 Console.WriteLine();
 
                 // the list of tools (executables) we are looking for.
-                var toolList = new HashSet<string>()
+                var toolList = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     "cl", "csc", "link", "lib", "csc", "msbuild", "devenv", "dumpbin"
                 };
