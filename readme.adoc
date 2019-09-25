@@ -44,4 +44,42 @@ This code prints all of the above information
 
 == Private Registry
 
-From Visual Studio 2017, a private registry file is used: `privateregistry.bin`.
+From Visual Studio 2017, a private registry file is used: `privateregistry.bin` - no entries are stored in the Windows public registry. The registry file can be
+found at
+
+----
+c:\users\<your-user-name>\appdata\local\microsoft\visualstudio\<version-id>_<instance-id>
+----
+
+where `version-id` is 15.x for Visual Studio 2017 and 16.x for Visual Studio 2019 and `instance-id` is an integer expressed as an 8-digit hexadecimal and is assigned
+at install time. Installing the same Visual Studio version on different computers generally results in a different `instance-id`. Subsequent installations on the *same* PC
+will have a different `instance-id`.
+
+Determining the `instance-id`\s on the local system is the first step to discovering information about Visual Studio installations. They are determined by examining 
+the folder `C:\ProgramData\Microsoft\VisualStudio\Packages\_Instances` as mentioned above. It appears that you can change the `instance-id` of an installation simply
+by renaming the instance folder. You would then have to rename the appdata folder containing the `privateregistry.bin` to match the
+new instance-id.
+
+=== Opening the privateregistry.bin file.
+
+In order to examine the `privateregistry.bin` file we need to use the
+https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regloadappkeya[`RegLoadAppKey`] Win32 API. If we wish to use this form C#, then we 
+need to use `DllImport`.
+
+----
+[DllImport("advapi32.dll", SetLastError = true)]
+private static extern int RegLoadAppKey(String hiveFile, out int hKey, RegSAM samDesired, int options, int reserved);
+----
+
+== Inside the Private Registry
+
+TODO : provide more info.
+
+== Microsoft.VisualStudio.Setup.Configuration
+
+Microsoft provide a documented interface to enumerate Visual Studio instances.
+
+TODO : provide more info.
+
+
+
