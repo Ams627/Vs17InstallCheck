@@ -1,4 +1,24 @@
-﻿using System;
+﻿// Copyright (c) Adrian Sims 2019
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +40,9 @@ namespace Vs17InstallCheck
         {
             try
             {
+                bool wantTools = (args.Any() && args[0] == "-t");
+                Console.WriteLine($"Analysing Visual Studio installations - use -t on the command line to check for tools.");
+                Console.WriteLine();
                 Console.WriteLine("User local appdata entries for Visual Studio");
                 var query = new SelectQuery("Win32_UserAccount");
                 var searcher = new ManagementObjectSearcher(query);
@@ -72,6 +95,77 @@ namespace Vs17InstallCheck
                     }
                     Console.WriteLine();
                 }
+
+                Console.WriteLine(@"Checking c:\program files (x86)\Microsoft Visual Studio");
+                var progDirs = Directory.GetDirectories(@"c:\program files (x86)\Microsoft Visual Studio");
+                var dirList = new List<string>();
+                foreach (var dir in progDirs)
+                {
+                    var lastPart = new DirectoryInfo(dir).Name;
+                    if (lastPart.All(char.IsDigit))
+                    {
+                        var year = Convert.ToInt32(lastPart);
+                        if (year > 2015 && year < 2140)
+                        {
+                            dirList.Add(dir);
+                        }
+                    }
+                }
+
+                foreach (var dir in dirList)
+                {
+                    var subDirs = Directory.GetDirectories(dir);
+                    foreach (var subDir in subDirs)
+                    {
+                        Console.WriteLine($"    {subDir}");
+                    }
+                }
+
+                // we might not want to find exe tools because it could take a while, so get out if we don't:
+                if (!wantTools)
+                {
+                    return;
+                }
+
+                Console.WriteLine();
+
+                // the list of tools (executables) we are looking for.
+                var toolList = new HashSet<string>()
+                {
+                    "cl", "csc", "link", "lib", "csc", "msbuild", "devenv", "dumpbin"
+                };
+                Console.WriteLine($"Checking for tools: {string.Join(" ", toolList.Select(x=>x + ".exe"))}");
+
+                var toolsFound = new List<string>();
+                var fileStack = new Stack<string>();
+                foreach (var dir in dirList)
+                {
+                    fileStack.Push(dir);
+                }
+
+                // depth first search over filesystem under the program files directories we found earlier for
+                // visual studio installations:
+                while (fileStack.Any())
+                {
+                    var nextDir = fileStack.Pop();
+                    var files = Directory.GetFiles(nextDir);
+                    foreach (var file in files)
+                    {
+                        var name = Path.GetFileNameWithoutExtension(file);
+                        var ext = Path.GetExtension(file);
+                        if (ext == ".exe" && toolList.Contains(name))
+                        {
+                            toolsFound.Add(file);
+                        }
+                    }
+                    var directories = Directory.GetDirectories(nextDir);
+                    foreach (var dir in directories)
+                    {
+                        fileStack.Push(dir);
+                    }
+                }
+
+                toolsFound.ForEach(x => Console.WriteLine($"    {x}"));
             }
             catch (Exception ex)
             {
