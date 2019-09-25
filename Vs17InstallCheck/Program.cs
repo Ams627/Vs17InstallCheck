@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -44,11 +43,11 @@ namespace Vs17InstallCheck
                 Console.WriteLine($"Analysing Visual Studio installations - use -t on the command line to check for tools.");
                 Console.WriteLine();
                 Console.WriteLine("User local appdata entries for Visual Studio");
-                var query = new SelectQuery("Win32_UserAccount");
-                var searcher = new ManagementObjectSearcher(query);
-                foreach (var mobject in searcher.Get())
+
+                var userDirs = Directory.GetDirectories(@"c:\users");
+                foreach (var dir in userDirs)
                 {
-                    var userPath = $@"c:\users\{mobject["Name"]}\appdata\local\microsoft\visualstudio\";
+                    var userPath = $@"{dir}\appdata\local\microsoft\visualstudio\";
                     if (Directory.Exists(userPath))
                     {
                         var directories = Directory.GetDirectories(userPath);
