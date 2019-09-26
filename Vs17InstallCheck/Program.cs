@@ -39,10 +39,16 @@ namespace Vs17InstallCheck
         {
             try
             {
-                bool wantTools = (args.Any() && args[0] == "-t");
+                var argset = new HashSet<string>(args);
+
+                bool wantTools = (args.Any() && argset.Contains("-t"));
+                bool wantReg = (args.Any() && argset.Contains("-r"));
+
                 Console.WriteLine($"Analysing Visual Studio installations - use -t on the command line to check for tools.");
                 Console.WriteLine();
                 Console.WriteLine("User local appdata entries for Visual Studio");
+
+                var privateRegistryList = new List<string>();
 
                 var userDirs = Directory.GetDirectories(@"c:\users");
                 foreach (var dir in userDirs)
@@ -54,9 +60,14 @@ namespace Vs17InstallCheck
                         var nameList = directories.Where(x => Regex.Match(new DirectoryInfo(x).Name, vsDirPattern, RegexOptions.IgnoreCase).Success);
                         foreach (var entry in nameList)
                         {
-                            var path = Path.Combine(entry, "privateregistry.bin");
-                            var reportName = File.Exists(path) ? "privateregistry.bin" : "";
+                            var privateRegPath = Path.Combine(entry, "privateregistry.bin");
+                            bool exists = File.Exists(privateRegPath);
+                            var reportName = exists ? "privateregistry.bin" : "";
                             Console.WriteLine($"    {entry} {reportName}");
+                            if (exists)
+                            {
+                                privateRegistryList.Add(privateRegPath);
+                            }
                         }
                     }
                 }
