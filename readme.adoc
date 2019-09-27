@@ -73,7 +73,20 @@ private static extern int RegLoadAppKey(String hiveFile, out int hKey, RegSAM sa
 
 == Inside the Private Registry
 
-TODO : provide more info.
+The classic reason for inspecting the `privateregistry.bin` file is to look for installed extensions in an instance of Visual Studio.
+These can be found under the registry key `Software\Microsoft\VisualStudio\{instance}\ExtensionManager\EnabledExtensions`. Under this key
+there is one value per extension. The value of the registry key is the package GUID of the extension (typically marked as follows in 
+the C# code for the extension:
+
+----
+    [Guid("3c6063ca-5f33-4889-aaae-387e9d5a0368")]
+    public sealed class AMSExtensionsPackage : Package
+----
+
+where `Package` is a class from `Microsoft.VisualStudio.Shell`.)
+
+
+
 
 == Microsoft.VisualStudio.Setup.Configuration
 
