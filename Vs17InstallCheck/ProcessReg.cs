@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
@@ -29,47 +30,34 @@ namespace Vs17InstallCheck
 {
     internal class ProcessReg
     {
-        public ProcessReg()
-        {
-        }
-
-        static string GetInstanceFromFilename(string filename)
-        {
-            var result = "";
-            var dirPart = Path.GetDirectoryName(filename);
-            var lastPart = new DirectoryInfo(dirPart).Name;
-            var pattern = @"[0-9]+\.[0-9A-Z]+_([a-f0-9]+)";
-            var match = Regex.Match(lastPart, pattern);
-            if (match.Success && match.Groups.Count > 1)
-            {
-                return match.Groups[1].Value;
-            }
-            return result;
-        }
-
         internal static void Process(List<string> privateRegistryList)
         {
-            var keyPath = $@"Software\Microsoft\VisualStudio";
-            foreach (var file in privateRegistryList)
+            Console.WriteLine();
+            Console.WriteLine(@"Dumping EnterpriseTools\QualityTools\TestTypes from private registries:");
+            foreach (var filename in privateRegistryList)
             {
-                var hKey = RegistryNativeMethods.RegLoadAppKey(file);
-                var instance = GetInstanceFromFilename(file);
-                using (var safeRegistryHandle = new SafeRegistryHandle(new IntPtr(hKey), true))
-                using (var appKey = RegistryKey.FromHandle(safeRegistryHandle))
-                using (var extensionsKey = appKey.OpenSubKey(keypath, true))
+                Console.WriteLine($"    {filename}");
+                var directory = Path.GetDirectoryName(filename);
+                var lastPart = new DirectoryInfo(directory).Name;
+
+                try
                 {
-                    // get a list of key-value pairs - use the value names to get the values
-                    result = extensionsKey == null ? result :
-                        extensionsKey.GetValueNames().Select(x => new KeyValuePair<string, string>(x, extensionsKey.GetValue(x).ToString())).ToList();
-
-                    var extensions = extensionsKey?.GetValueNames() ?? Enumerable.Empty<string>();
-                    foreach (var key in extensions)
+                    if (!File.Exists(filename))
                     {
-                        var value = extensionsKey.GetValue(key).ToString();
-                        result.Add(new KeyValuePair<string, string>(key, value));
+                        throw new VSPrivateRegException($"File {filename} does not exist.");
                     }
-                }
 
+                    var sprp = new SinglePrivateRegistryProcessor(filename);
+                    sprp.Process();
+                }
+                catch (VSPrivateRegException ex)
+                {
+                    Console.Error.WriteLine($"ERROR: {ex.Message}");
+                }
+                catch (Win32Exception wex)
+                {
+                    Console.Error.WriteLine($"ERROR: {wex.Message}");
+                }
             }
         }
     }

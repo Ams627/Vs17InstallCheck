@@ -132,50 +132,53 @@ namespace Vs17InstallCheck
                 }
 
                 // we might not want to find exe tools because it could take a while, so get out if we don't:
-                if (!wantTools)
+                if (wantTools)
                 {
-                    return;
-                }
 
-                Console.WriteLine();
+                    Console.WriteLine();
 
-                // the list of tools (executables) we are looking for.
-                var toolList = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    // the list of tools (executables) we are looking for.
+                    var toolList = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     "cl", "csc", "link", "lib", "csc", "msbuild", "devenv", "dumpbin"
                 };
-                Console.WriteLine($"Checking for tools: {string.Join(" ", toolList.Select(x=>x + ".exe"))}");
+                    Console.WriteLine($"Checking for tools: {string.Join(" ", toolList.Select(x => x + ".exe"))}");
 
-                var toolsFound = new List<string>();
-                var fileStack = new Stack<string>();
-                foreach (var dir in dirList)
-                {
-                    fileStack.Push(dir);
-                }
-
-                // depth first search over filesystem under the program files directories we found earlier for
-                // visual studio installations:
-                while (fileStack.Any())
-                {
-                    var nextDir = fileStack.Pop();
-                    var files = Directory.GetFiles(nextDir);
-                    foreach (var file in files)
-                    {
-                        var name = Path.GetFileNameWithoutExtension(file);
-                        var ext = Path.GetExtension(file);
-                        if (ext == ".exe" && toolList.Contains(name))
-                        {
-                            toolsFound.Add(file);
-                        }
-                    }
-                    var directories = Directory.GetDirectories(nextDir);
-                    foreach (var dir in directories)
+                    var toolsFound = new List<string>();
+                    var fileStack = new Stack<string>();
+                    foreach (var dir in dirList)
                     {
                         fileStack.Push(dir);
                     }
-                }
 
-                toolsFound.ForEach(x => Console.WriteLine($"    {x}"));
+                    // depth first search over filesystem under the program files directories we found earlier for
+                    // visual studio installations:
+                    while (fileStack.Any())
+                    {
+                        var nextDir = fileStack.Pop();
+                        var files = Directory.GetFiles(nextDir);
+                        foreach (var file in files)
+                        {
+                            var name = Path.GetFileNameWithoutExtension(file);
+                            var ext = Path.GetExtension(file);
+                            if (ext == ".exe" && toolList.Contains(name))
+                            {
+                                toolsFound.Add(file);
+                            }
+                        }
+                        var directories = Directory.GetDirectories(nextDir);
+                        foreach (var dir in directories)
+                        {
+                            fileStack.Push(dir);
+                        }
+                    }
+
+                    toolsFound.ForEach(x => Console.WriteLine($"    {x}"));
+                }
+                if (wantReg)
+                {
+                    ProcessReg.Process(privateRegistryList);
+                }
             }
             catch (Exception ex)
             {
