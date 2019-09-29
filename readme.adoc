@@ -97,12 +97,12 @@ TODO : provide more info.
 
 == Visual Studio 2019 Information
 
-=== Can I use C# 8 in Visual Studio 2019
+=== Can I use C# 8 in Visual Studio 2019?
 
-If you have updated to at least version 16.3 then the answer is "may be" :)
+If you have updated Visual Studio 2019 to at least version 16.3, then the answer is "may be" :)
 
-C# 8 requires changes in the runtime and will not be available on the .Net Framework until the .Net Framework merges into
-a single framework with .Net 5.0 in November 2020.
+C# 8 requires changes in the runtime and will not be available on the .Net Framework until the .Net Framework merges with
+.Net Core into a single framework with https://devblogs.microsoft.com/dotnet/introducing-net-5/[.Net 5.0] in November 2020.
 
 C# 8 is currently available on .Net core 3.0 only.
 
