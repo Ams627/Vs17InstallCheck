@@ -87,7 +87,6 @@ where `Package` is a class from `Microsoft.VisualStudio.Shell`.)
 
 
 
-
 == Microsoft.VisualStudio.Setup.Configuration
 
 Microsoft provide a documented interface to enumerate Visual Studio instances.
@@ -95,4 +94,20 @@ Microsoft provide a documented interface to enumerate Visual Studio instances.
 TODO : provide more info.
 
 
+
+== Visual Studio 2019 Information
+
+=== Can I use C# 8 in Visual Studio 2019
+
+If you have updated to at least version 16.3 then the answer is "may be" :)
+
+C# 8 requires changes in the runtime and will not be available on the .Net Framework until the .Net Framework merges into
+a single framework with .Net 5.0 in November 2020.
+
+C# 8 is currently available on .Net core 3.0 only.
+
+=== Can I choose the supported language version in Visual Studio 2019?
+
+No. This is no longer possible as it makes no sense. The supported language version is the highest version possible given
+the framework version. For all currently supported versions of the .Net Framework, this is C# 7.3.
 
