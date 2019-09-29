@@ -106,8 +106,14 @@ C# 8 requires changes in the runtime and will not be available on the .Net Frame
 
 C# 8 is currently available on .Net core 3.0 only.
 
+
 === Can I choose the supported language version in Visual Studio 2019?
 
 No. This is no longer possible as it makes no sense. The supported language version is the highest version possible given
 the framework version. For all currently supported versions of the .Net Framework, this is C# 7.3.
 
+=== Can I use C++ 20 with Visual Studio 2019?
+
+As of the date of writing this document, only a few of the features of C++ 20 are available. In version 16.3,
+C++ 20 [https://devblogs.microsoft.com/cppblog/c20-concepts-are-here-in-visual-studio-2019-version-16-3/]_concepts_
+are fully implemented.
