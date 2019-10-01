@@ -30,6 +30,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Vs17InstallCheck
 {
+
     class Program
     {
         const string vsDirPattern = "1[56789].[0-9]+_[a-z0-9]";
@@ -130,6 +131,23 @@ namespace Vs17InstallCheck
                         Console.WriteLine($"    {subDir}");
                     }
                 }
+
+                Console.WriteLine();
+                Console.WriteLine("Printing registry uninstall entries:");
+                var regUninstallEntries = new List<RegUninstallEntry>();
+                RegUnInstall.GetProgEntries(regUninstallEntries);
+                foreach (var entry in regUninstallEntries)
+                {
+                    Console.WriteLine($"   RegKey: {entry.Key}");
+                    Console.WriteLine($"   DisplayName: {entry.DisplayName}");
+                    Console.WriteLine($"   DisplayVersion: {entry.DisplayVersion}");
+                    Console.WriteLine($"   InstallLocation: {entry.InstallLocation}");
+                    Console.WriteLine($"   ModifyPath: {entry.ModifyPath}");
+                    Console.WriteLine($"   RepairPath: {entry.RepairPath}");
+                    Console.WriteLine($"   UninstallString: {entry.UninstallString}");
+                    Console.WriteLine();
+                }
+
 
                 // we might not want to find exe tools because it could take a while, so get out if we don't:
                 if (wantTools)

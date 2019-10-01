@@ -52,6 +52,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryNativeMethods.cs" />
+    <Compile Include="RegUninstallEntry.cs" />
     <Compile Include="SinglePrivateRegistryProcessor.cs" />
     <Compile Include="VSPrivateRegException.cs" />
   </ItemGroup>
