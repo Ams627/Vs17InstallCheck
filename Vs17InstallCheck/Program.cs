@@ -141,6 +141,7 @@ namespace Vs17InstallCheck
                     Console.WriteLine($"   RegKey: {entry.Key}");
                     Console.WriteLine($"   DisplayName: {entry.DisplayName}");
                     Console.WriteLine($"   DisplayVersion: {entry.DisplayVersion}");
+                    Console.WriteLine($"   InstallDate: {entry.InstallDate:yyyy-MM-dd}");
                     Console.WriteLine($"   InstallLocation: {entry.InstallLocation}");
                     Console.WriteLine($"   ModifyPath: {entry.ModifyPath}");
                     Console.WriteLine($"   RepairPath: {entry.RepairPath}");

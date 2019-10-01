@@ -21,6 +21,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Vs17InstallCheck
 {
@@ -63,12 +64,21 @@ namespace Vs17InstallCheck
 
                         if (displayName.StartsWith("Visual Studio") || installLocation.Contains("Microsoft Visual Studio"))
                         {
+                            var dateString = (string)subkeyHandle.GetValue("InstallDate");
+                            if (!DateTime.TryParseExact(dateString, "yyyyMMdd",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None, out var date))
+                            {
+                                date = DateTime.MinValue;
+                            }
+
 
                             list.Add(new RegUninstallEntry
                             {
                                 Key = subkeyName,
                                 DisplayName = displayName,
                                 DisplayVersion = (string)subkeyHandle.GetValue("DisplayVersion"),
+                                InstallDate = date,
                                 InstallLocation = installLocation,
                                 ModifyPath = (string)subkeyHandle.GetValue("ModifyPath"),
                                 RepairPath = (string)subkeyHandle.GetValue("RepairPath"),
